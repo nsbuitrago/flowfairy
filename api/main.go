@@ -42,7 +42,7 @@ func LoadFlow(w http.ResponseWriter, r *http.Request) {
 
 	_, fileHeader, err := r.FormFile("fcs_file_0")
 	file, err := fileHeader.Open()
-	_, fcsData, err := fcs2.NewDecoder(file).Decode()
+	fcsMetaData, fcsData, err := fcs2.NewDecoder(file).Decode()
 	err = file.Close()
 	if err != nil {
 		return
@@ -51,6 +51,7 @@ func LoadFlow(w http.ResponseWriter, r *http.Request) {
 	testResponse := models.FlowData{
 		ID:     1,
 		Events: fcsData,
+		MetaData: fcsMetaData,
 	}
 
 	//render.Render(w, r, fr)
