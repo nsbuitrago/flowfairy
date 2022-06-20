@@ -5,7 +5,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/go-chi/render"
 	"github.com/nsbuitrago/fcs2/fcs2"
 	"github.com/nsbuitrago/flowfairy/models"
 	"net/http"
@@ -15,7 +14,6 @@ func main() {
 	//router setup
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
-	router.Use(render.SetContentType(render.ContentTypeJSON))
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000"},
 		AllowedMethods: []string{"GET", "POST"},
