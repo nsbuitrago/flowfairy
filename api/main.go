@@ -41,41 +41,43 @@ func LoadFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-  nFcs := 1
-  wg: &Sync.WaitGroup
+  var wg sync.WaitGroup
+  var response models.FlowData
+  filenames := []string{"fcs_file_0"}
 
-  for (i:=0; i < nFcs; i++) {
+  for {
     wg.Add(1)
-    go func () {
-      filename := fmt.Sprintf("fcs_file_0")
+    go func() {
+      defer wg.Done()
+      filename := filenames[0] // todo: get filename
+      filenames = append(filenames[:0], filenames[0:]...) // is this the best way to do this?
       _, fileHeader, err := r.FormFile(filename)
       if err != nil {
-        return
+        panic(err) // this and subsequent panics should instead form an err response to send back
       }
 
       file, err := fileHeader.Open()
       if err != nil {
-        return
+        panic(err)
       }
 
       fcsMetaData, fcsData, err := fcs2.NewDecoder(file).Decode()
-      if err != nil; err = file.Close() {
-        return 
-      }
+      err = file.Close() 
+      if err != nil {
+        panic(err)
+        }
+
+      response.ID = 1
+      response.Events = fcsData
+      response.MetaData = fcsMetaData
     }()
-  }
 
-	response := models.FlowData{
-		ID:     1,
-		Events: fcsData,
-		MetaData: fcsMetaData,
-	}
-
+  wg.Wait()
 	//render.Render(w, r, fr)
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(&response)
+	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		return
 	}
-
 }
+
