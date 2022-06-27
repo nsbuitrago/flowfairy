@@ -8,6 +8,7 @@ import (
 	"github.com/nsbuitrago/fcs2/fcs2"
 	"github.com/nsbuitrago/flowfairy/models"
 	"net/http"
+  "sync"
 )
 
 func main() {
@@ -40,15 +41,31 @@ func LoadFlow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, fileHeader, err := r.FormFile("fcs_file_0")
-	file, err := fileHeader.Open()
-	fcsMetaData, fcsData, err := fcs2.NewDecoder(file).Decode()
-	err = file.Close()
-	if err != nil {
-		return
-	}
+  nFcs := 1
+  wg: &Sync.WaitGroup
 
-	testResponse := models.FlowData{
+  for (i:=0; i < nFcs; i++) {
+    wg.Add(1)
+    go func () {
+      filename := fmt.Sprintf("fcs_file_0")
+      _, fileHeader, err := r.FormFile(filename)
+      if err != nil {
+        return
+      }
+
+      file, err := fileHeader.Open()
+      if err != nil {
+        return
+      }
+
+      fcsMetaData, fcsData, err := fcs2.NewDecoder(file).Decode()
+      if err != nil; err = file.Close() {
+        return 
+      }
+    }()
+  }
+
+	response := models.FlowData{
 		ID:     1,
 		Events: fcsData,
 		MetaData: fcsMetaData,
@@ -56,7 +73,7 @@ func LoadFlow(w http.ResponseWriter, r *http.Request) {
 
 	//render.Render(w, r, fr)
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(&testResponse)
+	err = json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		return
 	}
