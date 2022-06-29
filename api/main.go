@@ -21,21 +21,24 @@ func main() {
 	}))
 
 	//routes
-	router.Get("/status", func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte("Operational"))
-		if err != nil {
-			return
-		}
-	})
+	router.Get("/status", GetStatus)
+	router.Post("/load", LoadData)
 
-	router.Post("/load", LoadFlow)
 	err := http.ListenAndServe(":8000", router)
 	if err != nil {
 		return
 	}
 }
 
-func LoadFlow(w http.ResponseWriter, r *http.Request) {
+func GetStatus(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  err := json.NewEncoder().Encode("Operational")
+  if err != nil {
+    return
+  }
+}
+
+func LoadData(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 >> 20) // 32 mb max memory (rest will be in disk)
 	if err != nil {
 		return

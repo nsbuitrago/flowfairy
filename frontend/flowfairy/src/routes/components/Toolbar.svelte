@@ -1,65 +1,51 @@
-<script>
-    import { LoadFlow, Ping } from "../../stores/flowstore";
-    let files
-</script>
+
 <div class="toolbar-container">
-    <div class="logo-container">
-        <p class="toolbar-text01">FlowFairy</p>
-
+    <div class="app-logo-container">
+        <h2>FlowFairy</h2>
     </div>
-    <div class="util-container">
-        <input class="toolbar-util" type="file" multiple bind:files on:change={() => LoadFlow(files)}>
-
-        <button class="toolbar-util" on:click={Ping}>
-            S
-        </button>
-
-        <button class="toolbar-util">
-            T
-        </button>
+    <div class="utility-container">
+        <label for="file-dialog">Load Data</label>
+        <input type="file" multiple class="utility-button" id="file-dialog">
+        <button class="utility-button">Save Data</button>
     </div>
 </div>
 
 <style>
-     :root {
-        --header-bg-color: #040a14;
-     }
-
     .toolbar-container {
+        display: flexbox;
+        position: fixed;
+        flex-direction: column;
+        height: 100vh;
+        width: 12rem;
+        top: 0;
+        left: 0;
+        border-top-right-radius: 10px;
+        background-color: black;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    .utility-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 10vw;
-        height: 100vh;
-        background-color: var(--header-bg-color);
-        color: #ffffff;
-    }
-
-    .logo-container {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .toolbar-text01 {
-        font-size: 24px;
-    }
-
-    .util-container {
-        display: flex;
-        flex-direction: column;
-        height: 20vh;
         justify-content: space-evenly;
-        width: 75%;
-        margin-top: 1vh;
-        margin-left: auto;
-        margin-right: auto;
+        height: 20vh;
     }
 
-    .toolbar-util {
-        height: 12%;
+    .app-logo-container {
+        display: flex;
+        justify-content: center;
+        color: white;
     }
 
-    .toolbar-util:hover {
+    .utility-button {
+        width: 50%;
+        padding: 2%;
+    }
+
+    .utility-button:hover {
+        background-color: white;
         cursor: pointer;
+        transition: ease-in-out 300m;
     }
 </style>
